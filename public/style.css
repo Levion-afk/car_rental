@@ -1,0 +1,13 @@
+/* styles.css */
+h1 {
+  color: #333;
+}
+
+#carList {
+  margin-bottom: 20px;
+}
+
+#orderForm {
+  margin-top: 20px;
+}
+
