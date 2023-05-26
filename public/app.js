@@ -7,42 +7,25 @@ function fetchData() {
       // Отримано успішну відповідь від серверу
       var data = JSON.parse(this.responseText);
       // Використовуйте дані для відображення на сторінці
-      // Наприклад, оновити таблицю з даними адміністраторів
-      updateAdministratorsTable(data.administrators);
+      // Наприклад, оновити список автомобілів
+      updateCarList(data.cars);
     }
   };
-  xhttp.open("GET", "/data", true);
+  xhttp.open("GET", "/cars", true);
   xhttp.send();
 }
 
-// Функція оновлення таблиці з даними адміністраторів
-function updateAdministratorsTable(administrators) {
-  var tableBody = document.getElementById("administrators-table-body");
-  tableBody.innerHTML = "";
+// Функція оновлення списку автомобілів
+function updateCarList(cars) {
+  var carList = document.getElementById("car-list");
+  carList.innerHTML = "";
 
-  administrators.forEach(function(admin) {
-    var row = document.createElement("tr");
-    var idCell = document.createElement("td");
-    idCell.textContent = admin.admin_id;
-    var firstNameCell = document.createElement("td");
-    firstNameCell.textContent = admin.first_name;
-    var lastNameCell = document.createElement("td");
-    lastNameCell.textContent = admin.last_name;
-    var phoneCell = document.createElement("td");
-    phoneCell.textContent = admin.phone_number;
-    var emailCell = document.createElement("td");
-    emailCell.textContent = admin.email;
-
-    row.appendChild(idCell);
-    row.appendChild(firstNameCell);
-    row.appendChild(lastNameCell);
-    row.appendChild(phoneCell);
-    row.appendChild(emailCell);
-
-    tableBody.appendChild(row);
+  cars.forEach(function(car) {
+    var listItem = document.createElement("li");
+    listItem.textContent = car.brand + " " + car.model;
+    carList.appendChild(listItem);
   });
 }
 
-// Виклик функції для отримання даних з бази даних
+// Виклик функції для отримання списку автомобілів
 fetchData();
-
