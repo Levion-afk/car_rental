@@ -2,10 +2,13 @@ const express = require('express');
 const mysql = require('mysql');
 
 const app = express();
+app.use(express.json());
 const port = 3000;
 
 const customersModule = require('./customers/customers');
-const carsModule = require('./cars/cars')
+const carsModule = require('./cars/cars');
+const damagesModule = require('./damages/damages');
+const ordersModule  = require('./orders/orders')
 // Підключення до бази даних
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -25,78 +28,200 @@ connection.connect((err) => {
 
 const customers = customersModule(connection);
 const cars = carsModule(connection);
-
-const newCustomer = {
-  customer_id: 6,
-  first_name: 'Bill',
-  last_name: 'Dee',
-  phone_number: '1234567890',
-  email: 'client6@gmail.com',
-  passport_data: 'AB223456',
-};
-
-const customerId = 1;
-const updatedData = {
-  first_name: 'Mike',
-  email: 'newemail@gmail.com',
-};
+const damages = damagesModule(connection);
+const orders = ordersModule(connection);
 
 //CUSTOMERS
-app.get("customers", (req, res) => {
+app.get("/customers", (req, res) => {
   customers.read().then(result => {
     res.send(result);
   }).catch(err => {
     console.error(err);
     res.status(500).send(err);
   });
-  
-  customers.create(newCustomer)
-  .then(insertId => {
-    console.log('Новий клієнт доданий з ідентифікатором:', insertId);
-  })
-  .catch(error => {
-    console.error('Помилка додавання нового клієнта:', error);
-  });
-
-
-  customers.update(customerId, updatedData)
-  .then(result => {
-    console.log('Інформація про клієнта оновлена:', result);
-  })
-  .catch(error => {
-    console.error('Помилка оновлення інформації про клієнта:', error);
-  });
 });
 
-const newCar = {
-  car_id: 6,
-  brand: 'Hynday',
-  model: 'Accent',
-  year: '2011',
-  license_plate: 'ABC223' ,
-  category: 'Sedan',
-  rental_rate_per_hour: 15.10
-}
+app.post("/customers", (req, res) => {
+  const newCustomerData = req.body;
+
+  customers.create(newCustomerData).then((newCustomer) => {
+    res.json(newCustomer);
+  }).catch((err) => {
+    res.status(500).json({message: err.message});
+  })
+})
+
+app.patch("/customers/:id", (req, res) => {
+  const customerId = req.params.id;
+  const updatedData = req.body;
+  customers.update(customerId, updatedData)
+    .then(result => {
+      console.log("Інформація про клієнта оновлена:", result);
+      res.send(result);
+    })
+    .catch(error => {
+      console.error("Помилка оновлення інформації про клієнта:", error);
+      res.status(500).send({ error: 'Помилка оновлення інформації про клієнта' });
+    });
+});
+
+app.delete("/customers/:id", (req, res) => {
+  const customerId = req.params.id;
+  customers.delete(customerId)
+    .then(result => {
+      console.log('Клієнт успішно видалений:', result);
+      res.send(result);
+    })
+    .catch(error => {
+      console.error('Помилка видалення клієнта:', error);
+      res.status(500).send({ error: 'Помилка видалення клієнта' });
+    });
+});
 
 
 //CARS
-app.get("cars", (req, res) => {
+app.get("/cars", (req, res) => {
   cars.read().then(result => {
     res.send(result);
   }).catch(err => {
     console.error(err);
     res.status(500).send(err);
   });
-  
-  cars.create(newCar)
-  .then(insertId => {
-    console.log('Новий автомобіль доданий з ідентифікатором:', insertId);
-  })
-  .catch(error => {
-    console.error('Помилка додавання нового автомобіля:', error);
-  });
-
 });
+
+app.post("/cars", (req, res) => {
+  const newCarData = req.body;
+
+  cars.create(newCarData).then((newCar) => {
+    res.json(newCar);
+  }).catch((err) => {
+    res.status(500).json({message: err.message});
+  })
+})
+
+app.patch("/cars/:id", (req, res) => {
+  const carId = req.params.id;
+  const updatedData = req.body;
+  cars.update(carId, updatedData)
+    .then(result => {
+      console.log("Інформація про автомобіль оновлена:", result);
+      res.send(result);
+    })
+    .catch(error => {
+      console.error("Помилка оновлення інформації про автомобіль:", error);
+      res.status(500).send({ error: 'Помилка оновлення інформації про автомобіль' });
+    });
+});
+
+app.delete("/cars/:id", (req, res) => {
+  const carId = req.params.id;
+  cars.delete(carId)
+    .then(result => {
+      console.log('Автомобіль успішно видалений:', result);
+      res.send(result);
+    })
+    .catch(error => {
+      console.error('Помилка видалення автомобіль:', error);
+      res.status(500).send({ error: 'Помилка видалення автомобіль' });
+    });
+});
+
+
+//DAMAGES
+app.get("/damages", (req, res) => {
+  damages.read().then(result => {
+    res.send(result);
+  }).catch(err => {
+    console.error(err);
+    res.status(500).send(err);
+  });
+});
+
+app.post("/damages", (req, res) => {
+  const newDamageData = req.body;
+
+  damages.create(newDamageData).then((newDamage) => {
+    res.json(newDamage);
+  }).catch((err) => {
+    res.status(500).json({message: err.message});
+  })
+})
+
+app.patch("/damages/:id", (req, res) => {
+  const damageId = req.params.id;
+  const updatedData = req.body;
+  damages.update(damageId, updatedData)
+    .then(result => {
+      console.log("Інформація про пошкодження оновлена:", result);
+      res.send(result);
+    })
+    .catch(error => {
+      console.error("Помилка оновлення інформації про пошкодження:", error);
+      res.status(500).send({ error: 'Помилка оновлення інформації про пошкодження' });
+    });
+});
+
+app.delete("/damages/:id", (req, res) => {
+  const damageId = req.params.id;
+  damages.delete(damageId)
+    .then(result => {
+      console.log('Пошкодження успішно видалений:', result);
+      res.send(result);
+    })
+    .catch(error => {
+      console.error('Помилка видалення пошкодження:', error);
+      res.status(500).send({ error: 'Помилка видалення пошкодження' });
+    });
+});
+
+
+//ORDERS
+app.get("/orders", (req, res) => {
+  orders.read().then(result => {
+    res.send(result);
+  }).catch(err => {
+    console.error(err);
+    res.status(500).send(err);
+  });
+});
+
+app.post("/orders", (req, res) => {
+  const newOrderData = req.body;
+
+  orders.create(newOrderData).then((newOrder) => {
+    res.json(newOrder);
+  }).catch((err) => {
+    res.status(500).json({message: err.message});
+  })
+})
+
+app.patch("/orders/:id", (req, res) => {
+  const orderId = req.params.id;
+  const updatedData = req.body;
+  orders.update(orderId, updatedData)
+    .then(result => {
+      console.log("Інформація про пошкодження оновлена:", result);
+      res.send(result);
+    })
+    .catch(error => {
+      console.error("Помилка оновлення інформації про пошкодження:", error);
+      res.status(500).send({ error: 'Помилка оновлення інформації про пошкодження' });
+    });
+});
+
+app.delete("/orders/:id", (req, res) => {
+  const orderId = req.params.id;
+  orders.delete(orderId)
+    .then(result => {
+      console.log('Пошкодження успішно видалений:', result);
+      res.send(result);
+    })
+    .catch(error => {
+      console.error('Помилка видалення пошкодження:', error);
+      res.status(500).send({ error: 'Помилка видалення пошкодження' });
+    });
+});
+
 
 // Запуск сервера
 app.listen(port, () => {

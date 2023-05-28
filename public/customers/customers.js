@@ -9,19 +9,38 @@ function customers(connection){
                     resolve(result);
                 }
             });
-        });
+        });     
     };
 
-    const createFn = (customerData) => {
+    const createFn = (newCustomerData) => {
         return new Promise((resolve, reject) => {
-            const { customer_id, first_name, last_name, phone_number, email, passport_data} = customerData;
+            if(
+                !newCustomerData.first_name ||
+                !newCustomerData.last_name ||
+                !newCustomerData.phone_number ||
+                !newCustomerData.email ||
+                !newCustomerData.passport_data
+            ) {
+                reject(new Error('All customer fields are required'))
+            }
     
-            const sql = 'INSERT INTO customers (customer_id, first_name, last_name, phone_number, email, passport_data) VALUES (?, ?, ?, ?, ?, ?)';
-            connection.query(sql, [customer_id, first_name, last_name, phone_number, email, passport_data], (error, result) => {
+            const sql = 'INSERT INTO customers SET ?';
+            connection.query(sql, newCustomerData, (error, result) => {
                 if (error) {
                 reject(error);
                 } else {
-                resolve(result.insertId);
+                    const newCustomerId = result.insertId;
+                    connection.query (
+                        'SELECT * FROM customers WHERE customer_id = ?',
+                        [newCustomerId],
+                        (selectError, selectResult) => {
+                            if (selectError) {
+                                reject(selectError);
+                            } else {
+                                resolve(selectResult[0]);
+                            }
+                        }
+                    )    
                 }
           });
         });
@@ -34,19 +53,37 @@ function customers(connection){
                 if (error) {
                     reject(error);
                 } else {
-                    resolve(result);
-                }
+                    connection.query('SELECT * FROM customers WHERE customer_id = ?', [customerId], (selectError, selectResult) => {
+                        if(selectError) {
+                            reject(selectError);
+                        } else {
+                            resolve(selectResult);
+                        }
+
+                    });
+                };
             });
         });
     }
 
-
-
+    const deleteFn = (customerId) => {
+        return new Promise((resolve, reject) => {
+          const sql = 'DELETE FROM customers WHERE customer_id = ?';
+          connection.query(sql, [customerId], (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          });
+        });
+      };
+      
     return {
         create: createFn,
-        read: readFn,
+        read: readFn,   
         update: updateFn,
-        delete: () => {},
+        delete: deleteFn,
     };
 }
 module.exports = customers;
