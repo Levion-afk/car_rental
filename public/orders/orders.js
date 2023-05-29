@@ -25,25 +25,32 @@ function orders(connection){
                 reject(new Error('All damages fields are required'))
             }
     
-            const sql = 'INSERT INTO orders SET ?';
-            connection.query(sql, newOrdersData, (error, result) => {
-                if (error) {
-                reject(error);
+            const sqlResetAutoIncrement = 'ALTER TABLE orders AUTO_INCREMENT = 1';
+            const sqlInsertOrder = 'INSERT INTO orders SET ?';
+            connection.query(sqlResetAutoIncrement, (resetError) => {
+                if (resetError) {
+                  reject(resetError);
                 } else {
-                    const newOrderId = result.insertId;
-                    connection.query (
+                  connection.query(sqlInsertOrder, newOrderData, (insertError, result) => {
+                    if (insertError) {
+                      reject(insertError);
+                    } else {
+                      const newOrderId = result.insertId;
+                      connection.query(
                         'SELECT * FROM orders WHERE order_id = ?',
                         [newOrderId],
                         (selectError, selectResult) => {
-                            if (selectError) {
-                                reject(selectError);
-                            } else {
-                                resolve(selectResult[0]);
-                            }
+                          if (selectError) {
+                            reject(selectError);
+                          } else {
+                            resolve(selectResult[0]);
+                          }
                         }
-                    )    
+                      );
+                    }
+                  });
                 }
-          });
+            });
         });
       };
 

@@ -14,37 +14,47 @@ function customers(connection){
 
     const createFn = (newCustomerData) => {
         return new Promise((resolve, reject) => {
-            if(
-                !newCustomerData.first_name ||
-                !newCustomerData.last_name ||
-                !newCustomerData.phone_number ||
-                !newCustomerData.email ||
-                !newCustomerData.passport_data
-            ) {
-                reject(new Error('All customer fields are required'))
-            }
-    
-            const sql = 'INSERT INTO customers SET ?';
-            connection.query(sql, newCustomerData, (error, result) => {
-                if (error) {
-                reject(error);
+          if (
+            !newCustomerData.first_name ||
+            !newCustomerData.last_name ||
+            !newCustomerData.phone_number ||
+            !newCustomerData.email ||
+            !newCustomerData.passport_data
+          ) {
+            reject(new Error('All customer fields are required'));
+          }
+      
+          const sqlResetAutoIncrement = 'ALTER TABLE customers AUTO_INCREMENT = 1';
+          const sqlInsertCustomer = 'INSERT INTO customers SET ?';
+      
+          connection.query(sqlResetAutoIncrement, (resetError) => {
+            if (resetError) {
+              reject(resetError);
+            } else {
+              connection.query(sqlInsertCustomer, newCustomerData, (insertError, result) => {
+                if (insertError) {
+                  reject(insertError);
                 } else {
-                    const newCustomerId = result.insertId;
-                    connection.query (
-                        'SELECT * FROM customers WHERE customer_id = ?',
-                        [newCustomerId],
-                        (selectError, selectResult) => {
-                            if (selectError) {
-                                reject(selectError);
-                            } else {
-                                resolve(selectResult[0]);
-                            }
-                        }
-                    )    
+                  const newCustomerId = result.insertId;
+                  connection.query(
+                    'SELECT * FROM customers WHERE customer_id = ?',
+                    [newCustomerId],
+                    (selectError, selectResult) => {
+                      if (selectError) {
+                        reject(selectError);
+                      } else {
+                        resolve(selectResult[0]);
+                      }
+                    }
+                  );
                 }
+              });
+            }
           });
         });
       };
+      
+      
 
     const updateFn = (customerId, updatedData) => {
         return new Promise((resolve, reject) => {

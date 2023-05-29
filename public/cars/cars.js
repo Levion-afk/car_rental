@@ -25,25 +25,32 @@ function cars(connection){
                 reject(new Error('All cars fields are required'))
             }
     
-            const sql = 'INSERT INTO cars SET ?';
-            connection.query(sql, newCarsData, (error, result) => {
-                if (error) {
-                reject(error);
+            const sqlResetAutoIncrement = 'ALTER TABLE cars AUTO_INCREMENT = 1';
+            const sqlInsertCar = 'INSERT INTO cars SET ?';
+            connection.query(sqlResetAutoIncrement, (resetError) => {
+                if (resetError) {
+                  reject(resetError);
                 } else {
-                    const newCarId = result.insertId;
-                    connection.query (
+                  connection.query(sqlInsertCar, newCarsData, (insertError, result) => {
+                    if (insertError) {
+                      reject(insertError);
+                    } else {
+                      const newCarId = result.insertId;
+                      connection.query(
                         'SELECT * FROM cars WHERE car_id = ?',
                         [newCarId],
                         (selectError, selectResult) => {
-                            if (selectError) {
-                                reject(selectError);
-                            } else {
-                                resolve(selectResult[0]);
-                            }
+                          if (selectError) {
+                            reject(selectError);
+                          } else {
+                            resolve(selectResult[0]);
+                          }
                         }
-                    )    
+                      );
+                    }
+                  });
                 }
-          });
+            });
         });
       };
 

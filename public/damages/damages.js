@@ -22,26 +22,33 @@ function damages(connection){
             ) {
                 reject(new Error('All damage fields are required'))
             }
-    
-            const sql = 'INSERT INTO damages SET ?';
-            connection.query(sql, newDamageData, (error, result) => {
-                if (error) {
-                reject(error);
+            
+            const sqlResetAutoIncrement = 'ALTER TABLE damages AUTO_INCREMENT = 1';
+            const sqlInsertDamage = 'INSERT INTO damages SET ?';
+            connection.query(sqlResetAutoIncrement, (resetError) => {
+                if (resetError) {
+                  reject(resetError);
                 } else {
-                    const newDamageId = result.insertId;
-                    connection.query (
+                  connection.query(sqlInsertDamage, newDamageData, (insertError, result) => {
+                    if (insertError) {
+                      reject(insertError);
+                    } else {
+                      const newDamageId = result.insertId;
+                      connection.query(
                         'SELECT * FROM damages WHERE damage_id = ?',
                         [newDamageId],
                         (selectError, selectResult) => {
-                            if (selectError) {
-                                reject(selectError);
-                            } else {
-                                resolve(selectResult[0]);
-                            }
+                          if (selectError) {
+                            reject(selectError);
+                          } else {
+                            resolve(selectResult[0]);
+                          }
                         }
-                    )    
+                      );
+                    }
+                  });
                 }
-          });
+            });
         });
       };
 
