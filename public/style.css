@@ -1,31 +1,30 @@
+/* style.css */
+
 h1 {
+  color: #333;
   text-align: center;
 }
 
-#car-list {
+#customers,
+#cars,
+#damages,
+#orders {
   margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f2f2f2;
 }
 
-#order-button {
-  display: block;
-  margin: 0 auto;
+table {
+  border-collapse: collapse;
+  width: 100%;
 }
 
-#order-form {
-  margin-top: 20px;
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
 }
 
-#order-form form {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+th {
+  background-color: #f2f2f2;
 }
 
-#order-form label {
-  margin-bottom: 5px;
-}
-
-#order-form input,
-#order-form select {
-  margin-bottom: 10px;
-}

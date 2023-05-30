@@ -1,40 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Список автомобілів</title>
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>Веб-застосунок</title>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <h1>Список автомобілів</h1>
-  
-  <div id="car-list">
-    <!-- Тут буде відображатись список автомобілів -->
-  </div>
+  <h1>Веб-застосунок</h1>
 
-  <button id="order-button">Сформувати замовлення</button>
+  <div id="customers"></div>
+  <form id="customerForm">
+    <input type="text" name="first_name" id="first_name" placeholder="Ім'я">
+    <input type="text" name="last_name" id="last_name" placeholder="Прізвище">
+    <input type="text" name="phone_number" id="phone_number" placeholder="Телефон">
+    <input type="text" name="email" id="email" placeholder="Email">
+    <input type="text" name="passport_data" id="passport_data" placeholder="Паспортні дані">
+    <button type="submit">Створити клієнта</button>
+  </form>
+  <div id="cars"></div>
+  <form id="carForm">
+    <input type="text" name="first_name" id="first_name" placeholder="Ім'я">
+    <input type="text" name="last_name" id="last_name" placeholder="Прізвище">
+    <input type="text" name="phone_number" id="phone_number" placeholder="Телефон">
+    <input type="text" name="email" id="email" placeholder="Email">
+    <input type="text" name="passport_data" id="passport_data" placeholder="Паспортні дані">
+    <button type="submit">Створити клієнта</button>
+  </form>
+  <div id="damages"></div>
+  <form id="damageForm">
+    <input type="text" name="first_name" id="first_name" placeholder="Ім'я">
+    <input type="text" name="last_name" id="last_name" placeholder="Прізвище">
+    <input type="text" name="phone_number" id="phone_number" placeholder="Телефон">
+    <input type="text" name="email" id="email" placeholder="Email">
+    <input type="text" name="passport_data" id="passport_data" placeholder="Паспортні дані">
+    <button type="submit">Створити клієнта</button>
+  </form>
+  <div id="orders"></div>
+  <form id="Form">
+    <input type="text" name="first_name" id="first_name" placeholder="Ім'я">
+    <input type="text" name="last_name" id="last_name" placeholder="Прізвище">
+    <input type="text" name="phone_number" id="phone_number" placeholder="Телефон">
+    <input type="text" name="email" id="email" placeholder="Email">
+    <input type="text" name="passport_data" id="passport_data" placeholder="Паспортні дані">
+    <button type="submit">Створити клієнта</button>
+  </form>
 
-  <div id="order-form" style="display: none;">
-    <h2>Форма замовлення</h2>
-    <form>
-      <label for="name">Ім'я:</label>
-      <input type="text" id="name" name="name" required><br>
-
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required><br>
-
-      <label for="phone">Телефон:</label>
-      <input type="tel" id="phone" name="phone" required><br>
-
-      <label for="car">Автомобіль:</label>
-      <select id="car" name="car" required>
-        <!-- Тут будуть варіанти автомобілів -->
-      </select><br>
-
-      <input type="submit" value="Замовити">
-    </form>
-  </div>
-
-  <script src="app.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>
+
+

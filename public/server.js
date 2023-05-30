@@ -3,6 +3,7 @@ const mysql = require('mysql');
 
 const app = express();
 app.use(express.json());
+app.use(express.static('public'));  
 const port = 3000;
 
 const customersModule = require('./customers/customers');
